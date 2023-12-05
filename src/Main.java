@@ -10,7 +10,7 @@ public class Main {
 //        tree.add(6);
 //        tree.add(15);
 //        tree.add(2);
-        System.out.println(tree.delete(10));
+        tree.delete(10);
         tree.printTree(tree.getRoot());
 
     }

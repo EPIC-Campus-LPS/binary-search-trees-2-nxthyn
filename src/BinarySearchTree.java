@@ -51,7 +51,7 @@ public class BinarySearchTree<E> {
 
         if (size == 1) {
 
-            if (root.getValue().compareTo((Integer) value) <= 0) {
+            if (root.getValue().compareTo((Integer) value) > 0) {
 
                 root.setLeftChild(new TreeNode<Integer>((Integer) value, null, null));
 
@@ -69,7 +69,7 @@ public class BinarySearchTree<E> {
         char leRi = '0';
         while (temp.getValue() != null) {
 
-            if (temp.getValue().compareTo(value) <= 0) {
+            if (temp.getValue().compareTo(value) > 0) {
                 leRi = 'l';
                 if (temp.getLeftChild() == null) break;
                 else {
@@ -78,7 +78,7 @@ public class BinarySearchTree<E> {
 
             }
 
-            if (temp.getValue().compareTo(value) > 0) {
+            if (temp.getValue().compareTo(value) <= 0) {
 
                 leRi = 'r';
                 if (temp.getRightChild() == null) break;
@@ -215,43 +215,85 @@ public class BinarySearchTree<E> {
 
     public void printInOrder() {
 
+        inOrderHelp(getRoot());
+
+    }
+
+    private static void inOrderHelp(TreeNode node) {
+
+        if (node == null) return;
+        inOrderHelp(node.getLeftChild());
+        System.out.print(node.getValue() + " ");
+        inOrderHelp(node.getRightChild());
 
     }
 
     public void printPreOrder() {
 
+        preOrderHelp(getRoot());
+
+    }
+
+    private static void preOrderHelp(TreeNode node) {
+
+        if (node == null) return;
+        System.out.print(node.getValue() + " ");
+        preOrderHelp(node.getLeftChild());
+        preOrderHelp(node.getRightChild());
 
     }
 
     public void printPostOrder() {
 
+        postOrderHelp(getRoot());
+
+    }
+
+    private static void postOrderHelp(TreeNode node) {
+
+        if (node == null) return;
+        postOrderHelp(node.getLeftChild());
+        postOrderHelp(node.getRightChild());
+        System.out.print(node.getValue() + " ");
 
     }
 
 
+
     public E delete(E value) {
 
-        TreeNode node = findValue(getRoot(), (int) value);
-        if (node.getLeftChild() == null && node.getRightChild() == null) {
+        TreeNode[] nodes = findValue(getRoot(), (int) value);
 
-            TreeNode temp = node;
-            node = null;
-            size--;
-            return (E) temp;
+        if (nodes[1].getLeftChild() == null && nodes[1].getRightChild() == null) {
 
-        } else if (node.getLeftChild() == null ^ node.getRightChild() == null) {
+            TreeNode temp = nodes[1];
 
-            TreeNode temp = node;
+            if (nodes[0].getLeftChild().equals(nodes[1])) {
 
-            if (node.getLeftChild() != null) {
-
-                node = node.getLeftChild();
-                node.setLeftChild(null);
+                nodes[0].setLeftChild(null);
 
             } else {
 
-                node = node.getRightChild();
-                node.setRightChild(null);
+                nodes[0].setRightChild(null);
+
+            }
+
+            size--;
+            return (E) temp;
+
+        } else if (nodes[1].getLeftChild() == null ^ nodes[1].getRightChild() == null) {
+
+            TreeNode temp = nodes[1];
+
+            if (nodes[1].getLeftChild() != null) {
+
+                nodes[1] = nodes[1].getLeftChild();
+                nodes[1].setLeftChild(null);
+
+            } else {
+
+                nodes[1] = nodes[1].getRightChild();
+                nodes[1].setRightChild(null);
 
             }
 
@@ -261,34 +303,38 @@ public class BinarySearchTree<E> {
 
         } else {
 
-            TreeNode temp = node.getLeftChild();
-            TreeNode left = temp.getLeftChild();
-            TreeNode n = node;
-            node = temp;
-            node.setLeftChild(left);
-            node.getRightChild().setLeftChild(temp.getRightChild());
+            TreeNode temp = nodes[1];
+
             size--;
-            return (E) n;
+            return (E) temp;
 
         }
 
     }
 
-    private static TreeNode findValue(TreeNode node, int value) {
+    private static TreeNode[] findValue(TreeNode node, int value) {
 
         if (node == null) {
 
+            System.out.println("whoops");
             throw new NoSuchElementException();
 
         }
 
-        if (node.getValue().equals(value)) return node;
+        if (node.getLeftChild().getValue().equals(value) || node.getRightChild().getValue().equals(value)) {
+
+            if (node.getLeftChild().getValue().equals(value)) return new TreeNode[]{node, node.getLeftChild()};
+            else if (node.getRightChild().getValue().equals(value)) return new TreeNode[]{node, node.getRightChild()};
+            else throw new IndexOutOfBoundsException("Something went wrong!");
+
+        }
 
         findValue(node.getLeftChild(), value);
         findValue(node.getRightChild(), value);
 
-        return node;
+        return null;
 
     }
+
 
 }
